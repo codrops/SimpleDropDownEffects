@@ -115,16 +115,18 @@
 			}
 
 		},
-    _throwHook : function( el, action, trigger ){
-      var $el = $( el );
-      var eventName = [ action, trigger, 'dropdown' ].join( '.' );
-      var event = $.Event( eventName );
-      event.value = $el.data( 'value' );
-      $el.trigger( event );
-    },
+		_throwHook : function( el, action, trigger ){
+			var $el = $( el );
+			var eventName = [ action, trigger, 'dropdown' ].join( '.' );
+			var event = $.Event( eventName );
+			event.value = $el.data( 'value' );
+			$el.trigger( event );
+		},
 		_initEvents : function() {
-      var throwHook = this._throwHook;
-			var self = this;
+			
+			var self = this,
+				throwHook = this._throwHook;
+			
 			this.selectlabel.on( 'mousedown.dropdown', function( event ) {
 
 				self.opened ? self.close() : self.open();
@@ -136,7 +138,7 @@
 
 				if( self.opened ) {
 					var opt = $( this );
-          opt.delegate('li', 'click.dropdown', throwHook( this, 'opened', 'click'))
+					opt.delegate( 'li', 'click.dropdown', throwHook( this, 'opened', 'click') );
 					self.inputEl.val( opt.data( 'value' ) );
 					self.selectlabel.html( opt.html() );
 					self.close();
