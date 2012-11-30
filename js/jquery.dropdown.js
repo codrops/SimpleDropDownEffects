@@ -4,12 +4,12 @@
  *
  * Licensed under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * Copyright 2012, Codrops
  * http://www.codrops.com
  */
 ;( function( $, window, undefined ) {
-	
+
 	'use strict';
 
 	$.DropDown = function( options, element ) {
@@ -38,7 +38,7 @@
 	$.DropDown.prototype = {
 
 		_init : function( options ) {
-			
+
 			// options
 			this.options = $.extend( true, {}, $.DropDown.defaults, options );
 			this._layout();
@@ -65,20 +65,20 @@
 
 			var optshtml = '', selectlabel = '';
 			this.$el.children( 'option' ).each( function() {
-				
+
 				var $this = $( this ),
 					val = Number( $this.attr( 'value' ) ),
 					classes = $this.attr( 'class' ),
 					label = $this.text();
 
-				val !== -1 ? 
-					classes !== undefined ? 
-						optshtml += '<li data-value="' + val + '"><span class="' + classes + '">' + label + '</span></li>' : 
-						optshtml += '<li data-value="' + val + '"><span>' + label + '</span></li>' : 
+				val !== -1 ?
+					classes !== undefined ?
+						optshtml += '<li data-value="' + val + '"><span class="' + classes + '">' + label + '</span></li>' :
+						optshtml += '<li data-value="' + val + '"><span>' + label + '</span></li>' :
 					selectlabel = label;
 
 			} );
-			
+
 			this.listopts = $( '<ul/>' ).append( optshtml );
 			this.selectlabel = $( '<span/>' ).append( selectlabel );
 			this.dd = $( '<div class="cd-dropdown"/>' ).append( this.selectlabel, this.listopts ).insertAfter( this.$el );
@@ -115,48 +115,53 @@
 			}
 
 		},
+    _throwHook : function( el, action, trigger ){
+      var $el = $( el );
+      var eventName = [ action, trigger, 'dropdown' ].join( '.' );
+      var event = $.Event( eventName );
+      event.value = $el.data( 'value' );
+      $el.trigger( event );
+    },
 		_initEvents : function() {
-			
+      var throwHook = this._throwHook;
 			var self = this;
-
 			this.selectlabel.on( 'mousedown.dropdown', function( event ) {
-				
+
 				self.opened ? self.close() : self.open();
 				return false;
-				
+
 			} );
 
 			this.opts.on( 'click.dropdown', function() {
 
 				if( self.opened ) {
 					var opt = $( this );
+          opt.delegate('li', 'click.dropdown', throwHook( this, 'opened', 'click'))
 					self.inputEl.val( opt.data( 'value' ) );
 					self.selectlabel.html( opt.html() );
 					self.close();
 				}
-
 			} );
 
 		},
 		open : function() {
-
 			var self = this;
 			this.dd.toggleClass( 'cd-active' );
 			this.listopts.css( 'height', ( this.optsCount + 1 ) * ( this.size.height + this.options.gutter ) );
 			this.opts.each( function( i ) {
-				
+
 				$( this ).css( {
 					opacity : 1,
-					top : self.options.rotated ? self.size.height + self.options.gutter : ( i + 1 ) * ( self.size.height + self.options.gutter ), 
+					top : self.options.rotated ? self.size.height + self.options.gutter : ( i + 1 ) * ( self.size.height + self.options.gutter ),
 					left : self.options.random ? Math.floor( Math.random() * 11 - 5 ) : 0,
 					width : self.size.width,
 					marginLeft : 0,
-					transform : self.options.random ? 
-						'rotate(' + Math.floor( Math.random() * 11 - 5 ) + 'deg)' : 
-						self.options.rotated ? 
-							self.options.rotated === 'right' ? 
-								'rotate(-' + ( i * 5 ) + 'deg)' : 
-								'rotate(' + ( i * 5 ) + 'deg)' 
+					transform : self.options.random ?
+						'rotate(' + Math.floor( Math.random() * 11 - 5 ) + 'deg)' :
+						self.options.rotated ?
+							self.options.rotated === 'right' ?
+								'rotate(-' + ( i * 5 ) + 'deg)' :
+								'rotate(' + ( i * 5 ) + 'deg)'
 							: 'none',
 					transitionDelay : self.options.delay && Modernizr.csstransitions ? self.options.slidingIn ? ( i * self.options.delay ) + 'ms' : ( ( self.optsCount - 1 - i ) * self.options.delay ) + 'ms' : 0
 				} );
@@ -166,7 +171,7 @@
 
 		},
 		close : function() {
-			
+
 			var self = this;
 			this.dd.toggleClass( 'cd-active' );
 			if( this.options.delay && Modernizr.csstransitions ) {
@@ -180,21 +185,21 @@
 		}
 
 	}
-	
+
 	$.fn.dropdown = function( options ) {
-		var instance = $.data( this, 'dropdown' );	
+		var instance = $.data( this, 'dropdown' );
 		if ( typeof options === 'string' ) {
 			var args = Array.prototype.slice.call( arguments, 1 );
 			this.each(function() {
 				instance[ options ].apply( instance, args );
 			});
-		} 
+		}
 		else {
-			this.each(function() {	
+			this.each(function() {
 				instance ? instance._init() : instance = $.data( this, 'dropdown', new $.DropDown( options, this ) );
 			});
 		}
 		return instance;
 	};
-	
+
 } )( jQuery, window );
