@@ -67,7 +67,7 @@
 			this.$el.children( 'option' ).each( function() {
 
 				var $this = $( this ),
-					val = Number( $this.attr( 'value' ) ),
+					val = isNaN( $this.attr( 'value' ) ) ? $this.attr( 'value' ) : Number( $this.attr( 'value' ) ) ,
 					classes = $this.attr( 'class' ),
 					label = $this.text();
 
@@ -128,14 +128,12 @@
 				throwHook = this._throwHook;
 			
 			this.selectlabel.on( 'mousedown.dropdown', function( event ) {
-
 				self.opened ? self.close() : self.open();
 				return false;
 
 			} );
 
 			this.opts.on( 'click.dropdown', function() {
-
 				if( self.opened ) {
 					var opt = $( this );
 					opt.delegate( 'li', 'click.dropdown', throwHook( this, 'opened', 'click') );
