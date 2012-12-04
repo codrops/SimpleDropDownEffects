@@ -53,7 +53,12 @@
 			this.opts = this.listopts.children( 'li' );
 			this.optsCount = this.opts.length;
 			this.size = { width : this.dd.width(), height : this.dd.height() };
-			this.inputEl = $( '<input type="hidden" name="cd-dropdown"></input>' ).insertAfter( this.selectlabel );
+			
+			var elName = this.$el.attr( 'name' ), elId = this.$el.attr( 'id' ),
+				inputName = elName !== undefined ? elName : elId !== undefined ? elId : 'cd-dropdown-' + ( new Date() ).getTime();
+
+			this.inputEl = $( '<input type="hidden" name="' + inputName + '"></input>' ).insertAfter( this.selectlabel );
+			
 			this.selectlabel.css( 'z-index', this.minZIndex + this.optsCount );
 			this._positionOpts();
 			if( Modernizr.csstransitions ) {
