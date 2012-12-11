@@ -123,8 +123,7 @@
 		},
 		_initEvents : function() {
 			
-			var self = this,
-				throwHook = this._throwHook;
+			var self = this;
 			
 			this.selectlabel.on( 'mousedown.dropdown', function( event ) {
 				self.opened ? self.close() : self.open();
