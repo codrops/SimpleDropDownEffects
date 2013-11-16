@@ -55,8 +55,14 @@
 			this.optsCount = this.opts.length;
 			this.size = { width : this.dd.width(), height : this.dd.height() };
 			
-			var elName = this.$el.attr( 'name' ), elId = this.$el.attr( 'id' ),
-				inputName = elName !== undefined ? elName : elId !== undefined ? elId : 'cd-dropdown-' + ( new Date() ).getTime();
+			var elName = this.$el.prop( 'name' ), 
+				elId = this.$el.prop( 'id' ),
+				inputName = elName !== undefined ? 
+					elName : 
+					elId !== undefined ? 
+						elId : 
+						'cd-dropdown-' + ( new Date() ).getTime()
+			;
 
 			this.inputEl = $( '<input type="hidden"/>' )
 				.attr({name: inputName, value: value})
@@ -65,38 +71,29 @@
 			this.selectlabel.css( 'z-index', this.minZIndex + this.optsCount );
 			this._positionOpts();
 			if( Modernizr.csstransitions ) {
-				setTimeout( function() { self.opts.css( 'transition', 'all ' + self.options.speed + 'ms ' + self.options.easing ); }, 25 );
+				setTimeout( function() {
+					self.opts.css( 'transition', prepare('all $0ms $1', self.options.speed, self.options.easing); 
+				}, 25 );
 			}
 
 		},
 		_transformSelect : function() {
 
 			var optshtml = '', selectlabel = '', value = -1;
-			this.$el.children( 'option' ).each( function() {
+			this.$el.children().not('[value="-1"]').each( function() {
+				optshtml += prepare('<li data-value="$0"><span class="$1">$2</span></li>', this.value, this.className, this.innerHTML);
 
-				var $this = $( this ),
-					val = isNaN( $this.attr( 'value' ) ) ? $this.attr( 'value' ) : Number( $this.attr( 'value' ) ) ,
-					classes = $this.attr( 'class' ),
-					selected = $this.attr( 'selected' ),
-					label = $this.text();
-
-				if( val !== -1 ) {
-					optshtml += 
-						classes !== undefined ? 
-							'<li data-value="' + val + '"><span class="' + classes + '">' + label + '</span></li>' :
-							'<li data-value="' + val + '"><span>' + label + '</span></li>';
+				if( this.selected ) {
+					selectlabel = this.innerHTML;
+					value = this.value;
 				}
-
-				if( selected ) {
-					selectlabel = label;
-					value = val;
-				}
-
 			} );
 
 			this.listopts = $( '<ul/>' ).append( optshtml );
 			this.selectlabel = $( '<span/>' ).append( selectlabel );
-			this.dd = $( '<div class="cd-dropdown"/>' ).append( this.selectlabel, this.listopts ).insertAfter( this.$el );
+			this.dd = $( '<div class="cd-dropdown"/>' )
+				.append( this.selectlabel, this.listopts )
+				.insertAfter( this.$el );
 			this.$el.remove();
 
 			return value;
@@ -166,11 +163,9 @@
 					width : self.size.width,
 					marginLeft : 0,
 					transform : self.options.random ?
-						'rotate(' + Math.floor( Math.random() * 11 - 5 ) + 'deg)' :
+						rotate(Math.floor( Math.random() * 11 - 5 )) :
 						self.options.rotated ?
-							self.options.rotated === 'right' ?
-								'rotate(-' + ( i * 5 ) + 'deg)' :
-								'rotate(' + ( i * 5 ) + 'deg)'
+							rotate(i * 5 * (self.options.rotated === 'right' ? -1 : 1))
 							: 'none',
 					transitionDelay : self.options.delay && Modernizr.csstransitions ? self.options.slidingIn ? ( i * self.options.delay ) + 'ms' : ( ( self.optsCount - 1 - i ) * self.options.delay ) + 'ms' : 0
 				} );
@@ -210,5 +205,20 @@
 		}
 		return instance;
 	};
+	
+	function rotate(num, points){
+		points || (points = 'deg');
+		return 'rotate(' + num + points + ')';
+	}
+	
+	function prepare(str, args) {
+		if (! $.isArray(args)) {
+			args = Array.prototype.slice.call(arguments, 1);
+		}
+		
+		return str.replace(/\$(\d+)/g, function(x, i){
+			return args[i];
+		});
+	}
 
 } )( jQuery, window );
