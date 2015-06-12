@@ -1,0 +1,18 @@
+{
+  "name": "SimpleDropDownEffects",
+  "version": "1.0.1",
+  "homepage": "https://github.com/codrops/SimpleDropDownEffects",
+  "authors": [
+    "@botelho"
+  ],
+  "description": "A jQuery plugin for transforming select inputs into drop-down lists with some simple expanding effects.",
+  "main": "js/modernizr.custom.63321.js",
+  "keywords": [
+    "3d",
+    "dropdown",
+    "effects",
+    "jquery",
+    "plugin"
+  ],
+  "license": "MIT"
+}
