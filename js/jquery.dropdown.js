@@ -143,8 +143,12 @@
 			this.opts.on( 'click.dropdown', function() {
 				if( self.opened ) {
 					var opt = $( this );
+					var val = opt.data( 'value' );
 					self.options.onOptionSelect( opt );
-					self.inputEl.val( opt.data( 'value' ) );
+					if (val != self.inputEl.val()) {
+						self.inputEl.val( val );
+						self.inputEl.change();
+					}
 					self.selectlabel.html( opt.html() );
 					self.close();
 				}
