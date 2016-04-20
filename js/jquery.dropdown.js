@@ -69,13 +69,13 @@
 		},
 		_transformSelect : function() {
 
-			var optshtml = '', selectlabel = '', value = -1;
+			var optshtml = '', selectlabel = '', value = -1, oldVal = this.$el.val();
 			this.$el.children( 'option' ).each( function() {
 
 				var $this = $( this ),
 					val = isNaN( $this.attr( 'value' ) ) ? $this.attr( 'value' ) : Number( $this.attr( 'value' ) ) ,
 					classes = $this.attr( 'class' ),
-					selected = $this.attr( 'selected' ),
+					selected = $this.attr( 'selected' ) || oldVal == val,
 					label = $this.text();
 
 				if( val !== -1 ) {
